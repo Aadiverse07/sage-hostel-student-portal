@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Details | SAGE University Hostel</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/room.css') }}">
+</head>
+
+<body class="room-page">
+
+<aside class="sidebar">
+    <div class="logo">
+        <i class="fa-solid fa-building-columns"></i>
+        <span>SAGE HOSTEL</span>
+    </div>
+
+    <ul>
+        <li onclick="window.location.href='{{ url_for('dashboard') }}'">
+            <i class="fa-solid fa-house"></i> Dashboard
+        </li>
+        <li onclick="window.location.href='{{ url_for('profile') }}'">
+            <i class="fa-solid fa-user"></i> Student Profile
+        </li>
+        <li class="active">
+            <i class="fa-solid fa-bed"></i> Room Details
+        </li>
+        <li onclick="location.href='{{ url_for("fees") }}'"><i class="fa-solid fa-money-check-dollar"></i> Fee Status</li>
+        <li onclick="location.href='{{ url_for("attendance") }}'"><i class="fa-solid fa-calendar-check"></i> Attendance</li>
+        <li><i class="fa-solid fa-bullhorn"></i> Notices</li>
+        <li><i class="fa-solid fa-screwdriver-wrench"></i> Complaints</li>
+        <li><i class="fa-solid fa-gear"></i> Settings</li>
+        <li onclick="window.location.href='{{ url_for('logout') }}'">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </li>
+    </ul>
+</aside>
+
+<main class="main room-main">
+
+    <header class="room-header">
+        <div>
+            <div class="eyebrow"><i class="fa-solid fa-bed"></i> ACCOMMODATION</div>
+            <h1>Room Details</h1>
+            <p>Your hostel room allocation, occupancy information, and room booking options.</p>
+        </div>
+
+        <div class="header-right">
+            <div class="clock">
+                <span id="room-date"></span>
+                <span id="room-time"></span>
+            </div>
+            <div class="status"><span class="dot"></span> Online</div>
+        </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="room-alerts">
+        {% for category, message in messages %}
+        <div class="room-alert {{ category }}"><i class="fa-solid {{ 'fa-circle-check' if category == 'info' else 'fa-triangle-exclamation' }}"></i><span>{{ message }}</span></div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% if room %}
+
+    <section class="room-hero">
+        <div class="room-hero-left">
+            <span class="hero-kicker">YOUR ALLOCATED ROOM</span>
+            <div class="hero-room-number">{{ room["room_number"] }}</div>
+            <div class="hero-meta">
+                <span><i class="fa-solid fa-layer-group"></i> {{ room["floor"] }}</span>
+                <span><i class="fa-solid fa-circle-check"></i> {{ room["status"] }}</span>
+            </div>
+        </div>
+
+        <div class="occupancy-ring">
+            <div class="occupancy-value">
+                <strong>{{ occupied_count }}</strong>
+                <span>/ {{ room["capacity"] }}</span>
+            </div>
+            <small>OCCUPIED</small>
+        </div>
+    </section>
+
+    <section class="room-grid">
+
+        <div class="room-card overview-card">
+            <div class="card-title">
+                <div>
+                    <span>ROOM OVERVIEW</span>
+                    <h2>Allocation Information</h2>
+                </div>
+                <i class="fa-solid fa-door-open"></i>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-box">
+                    <small>Room Number</small>
+                    <strong>{{ room["room_number"] }}</strong>
+                </div>
+                <div class="info-box">
+                    <small>Floor</small>
+                    <strong>{{ room["floor"] }}</strong>
+                </div>
+                <div class="info-box">
+                    <small>Capacity</small>
+                    <strong>{{ room["capacity"] }} Residents</strong>
+                </div>
+                <div class="info-box">
+                    <small>Available Beds</small>
+                    <strong class="{{ 'available-text' if available_beds else 'full-text' }}">
+                        {{ available_beds }}
+                    </strong>
+                </div>
+            </div>
+
+            <div class="facilities">
+                <small>ROOM FACILITIES</small>
+                <div class="facility-tags">
+                    {% for facility in (room["facilities"] or "Standard hostel facilities").split(",") %}
+                    <span><i class="fa-solid fa-check"></i>{{ facility.strip() }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="room-card status-card">
+            <div class="card-title">
+                <div>
+                    <span>ROOM STATUS</span>
+                    <h2>Current Condition</h2>
+                </div>
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div class="status-banner">
+                <span class="status-check"><i class="fa-solid fa-check"></i></span>
+                <div>
+                    <strong>{{ room["status"] }}</strong>
+                    <small>Your room allocation is active.</small>
+                </div>
+            </div>
+
+            <div class="status-detail">
+                <span><i class="fa-solid fa-user"></i> Your allocation</span>
+                <strong>{{ student["name"] }}</strong>
+            </div>
+            <div class="status-detail">
+                <span><i class="fa-solid fa-bed"></i> Occupancy</span>
+                <strong>{{ occupied_count }} / {{ room["capacity"] }}</strong>
+            </div>
+            <div class="status-detail">
+                <span><i class="fa-solid fa-circle"></i> Beds available</span>
+                <strong>{{ available_beds }}</strong>
+            </div>
+        </div>
+
+        <div class="room-card roommates-card">
+            <div class="card-title">
+                <div>
+                    <span>ROOMMATES</span>
+                    <h2>People in Room {{ room["room_number"] }}</h2>
+                </div>
+                <i class="fa-solid fa-users"></i>
+            </div>
+
+            <div class="resident-list">
+
+                <div class="resident current-resident">
+                    <div class="resident-avatar">{{ student["name"][0] }}</div>
+                    <div class="resident-info">
+                        <strong>{{ student["name"] }}</strong>
+                        <span>{{ student["enrollment"] }} · You</span>
+                    </div>
+                    <span class="you-badge">YOU</span>
+                </div>
+
+                {% for roommate in roommates %}
+                <div class="resident">
+                    <div class="resident-avatar">{{ roommate["name"][0] }}</div>
+                    <div class="resident-info">
+                        <strong>{{ roommate["name"] }}</strong>
+                        <span>{{ roommate["enrollment"] }} · {{ roommate["branch"] or "Student" }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="empty-room">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>No other roommate is currently assigned.</span>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <div class="room-card booking-card">
+            <div class="card-title">
+                <div>
+                    <span>ROOM BOOKING</span>
+                    <h2>Book Your Room</h2>
+                </div>
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+            {% if pending_room_payment %}
+            <div class="booking-confirmed" style="background:#fff7ed;border-color:#fed7aa;color:#9a3412">
+                <i class="fa-solid fa-clock"></i>
+                <div><strong>Booking payment started</strong><small>Room {{ pending_room_payment["room_number"] }} · ₹500 is awaiting your payment confirmation.</small></div>
+            </div>
+            <a class="support-button booking-receipt-btn" href="{{ url_for('room_payment', payment_ref=pending_room_payment['payment_ref']) }}"><i class="fa-solid fa-qrcode"></i> Continue ₹500 Room Payment</a>
+            {% elif latest_booking %}
+            <div class="booking-confirmed">
+                <i class="fa-solid fa-circle-check"></i>
+                <div><strong>Booking confirmed</strong><small>Room {{ latest_booking["room_number"] }} · {{ latest_booking["booking_ref"] }}</small></div>
+            </div>
+            <a class="support-button booking-receipt-btn" href="{{ url_for('room_receipt', booking_id=latest_booking['booking_ref']) }}"><i class="fa-solid fa-file-invoice"></i> View Booking Receipt</a>
+            {% elif student["room"] %}
+            <div class="booking-confirmed existing">
+                <i class="fa-solid fa-bed"></i>
+                <div><strong>Your room is already allotted</strong><small>Room {{ student["room"] }} is assigned to your student profile. No new booking is required.</small></div>
+            </div>
+            <button type="button" class="support-button" disabled><i class="fa-solid fa-circle-check"></i> Room Already Allotted to You</button>
+            {% else %}
+            <div class="new-student-note">
+                <i class="fa-solid fa-circle-info"></i>
+                <div>
+                    <strong>You do not have a room allotted yet.</strong>
+                    <span>Select a room marked <b>Available</b>. Your student details and the final room allotment will be saved automatically.</span>
+                </div>
+            </div>
+            <form method="POST" class="booking-form">
+                <label for="room_number">Available Room</label>
+                <select id="room_number" name="room_number" required>
+                    <option value="">Choose a room</option>
+                    {% for available in available_rooms %}
+                    <option value="{{ available['room_number'] }}">Room {{ available['room_number'] }} · {{ available['floor'] }} · {{ available['available_beds'] }} bed{{ 's' if available['available_beds'] != 1 else '' }} free</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="support-button"><i class="fa-solid fa-calendar-check"></i> Book Your Room · ₹500</button>
+            </form>
+            {% endif %}
+        </div>
+
+        <div class="room-card help-card">
+            <div class="card-title">
+                <div>
+                    <span>HOSTEL SUPPORT</span>
+                    <h2>Need Room Assistance?</h2>
+                </div>
+                <i class="fa-solid fa-headset"></i>
+            </div>
+
+            <p>If you notice a maintenance issue, electrical problem, furniture damage, or any other room-related concern, report it through the hostel complaint system.</p>
+
+            <button type="button" class="support-button" onclick="alert('The Complaints module will be connected in the next development phase.')">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                Report Room Issue
+            </button>
+        </div>
+
+    </section>
+
+    {% else %}
+
+    <section class="no-room">
+        <div class="no-room-icon"><i class="fa-solid fa-bed"></i></div>
+        <span class="no-room-kicker">ROOM BOOKING</span>
+        <h2>You Don't Have a Room Yet</h2>
+        <p>Your student profile currently has no room allotment. Choose any room with an available bed and confirm your booking. The system will allot that room to you and save your booking details.</p>
+
+        {% if available_rooms %}
+        <div class="available-room-list">
+            <div class="available-room-heading">
+                <div>
+                    <small>LIVE AVAILABILITY</small>
+                    <strong>Choose an Available Room</strong>
+                </div>
+                <span><i class="fa-solid fa-circle"></i> Available</span>
+            </div>
+            <div class="available-room-grid">
+                {% for available in available_rooms %}
+                <label class="available-room-option">
+                    <input type="radio" name="room_choice" value="{{ available['room_number'] }}" form="empty-booking-form">
+                    <div class="room-option-body">
+                        <div class="room-option-top">
+                            <strong>Room {{ available['room_number'] }}</strong>
+                            <span class="availability-pill"><i class="fa-solid fa-circle"></i> Available</span>
+                        </div>
+                        <span>{{ available['floor'] }} · {{ available['available_beds'] }} bed{{ 's' if available['available_beds'] != 1 else '' }} free</span>
+                        <small>Capacity {{ available['capacity'] }} · {{ available['facilities'] or 'Standard hostel facilities' }}</small>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <form method="POST" id="empty-booking-form" class="booking-form no-room-booking">
+            <input type="hidden" id="room_number_empty" name="room_number" value="" required>
+            <button type="submit" class="support-button"><i class="fa-solid fa-calendar-check"></i> Book Selected Room · ₹500</button>
+            <small class="booking-security-note"><i class="fa-solid fa-shield-halved"></i> Availability is checked again when you confirm, so a room cannot be double-booked.</small>
+        </form>
+        {% else %}
+        <div class="no-rooms-available"><i class="fa-solid fa-circle-exclamation"></i><strong>No rooms are currently available.</strong><span>Please check again later or contact hostel administration.</span></div>
+        {% endif %}
+    </section>
+
+    {% endif %}
+
+</main>
+
+<script>
+function updateRoomClock() {
+    const now = new Date();
+    document.getElementById("room-date").textContent = now.toLocaleDateString("en-IN", {
+        weekday: "short", day: "2-digit", month: "short", year: "numeric"
+    });
+    document.getElementById("room-time").textContent = now.toLocaleTimeString("en-IN", {
+        hour: "2-digit", minute: "2-digit", second: "2-digit"
+    });
+}
+updateRoomClock();
+setInterval(updateRoomClock, 1000);
+
+document.querySelectorAll('input[name="room_choice"]').forEach(function (radio) {
+    radio.addEventListener('change', function () {
+        const hidden = document.getElementById('room_number_empty');
+        if (hidden) hidden.value = this.value;
+    });
+});
+</script>
+
+</body>
+</html>

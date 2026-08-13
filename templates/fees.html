@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fee Status | SAGE University Hostel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/fees.css') }}">
+</head><body>
+<aside class="sidebar"><div class="logo"><i class="fa-solid fa-building-columns"></i><span>SAGE HOSTEL</span></div><ul>
+<li onclick="location.href='{{url_for("dashboard")}}'"><i class="fa-solid fa-house"></i> Dashboard</li>
+<li onclick="location.href='{{url_for("profile")}}'"><i class="fa-solid fa-user"></i> Student Profile</li>
+<li onclick="location.href='{{url_for("room_details")}}'"><i class="fa-solid fa-bed"></i> Room Details</li>
+<li class="active"><i class="fa-solid fa-money-check-dollar"></i> Fee Status</li>
+<li onclick="location.href='{{ url_for("attendance") }}'"><i class="fa-solid fa-calendar-check"></i> Attendance</li><li><i class="fa-solid fa-bullhorn"></i> Notices</li>
+<li><i class="fa-solid fa-screwdriver-wrench"></i> Complaints</li><li><i class="fa-solid fa-gear"></i> Settings</li>
+<li onclick="location.href='{{url_for("logout")}}'"><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
+</ul></aside>
+<main class="main fees-main">
+<header class="fees-header"><div><div class="eyebrow"><i class="fa-solid fa-money-check-dollar"></i> FINANCIAL OVERVIEW</div>
+<h1>Fee Status</h1><p>Review your hostel fee summary and payment history.</p></div>
+<div class="header-right"><div class="clock"><span id="d"></span><span id="t"></span></div><div class="status"><span class="dot"></span> Online</div></div></header>
+
+<section class="fee-hero"><div><span class="hero-kicker">CURRENT FEE STATUS</span>
+<h2>{% if latest_fee and latest_fee["status"]|lower=="paid" %}All dues are cleared{% elif latest_fee and latest_fee["id"] in overdue_ids %}Payment overdue{% else %}Payment status{% endif %}</h2>
+<p>{% if latest_fee and latest_fee["status"]|lower=="paid" %}Your latest recorded hostel fee payment has been received successfully.{% elif latest_fee and latest_fee["id"] in overdue_ids %}Your latest fee record is past its due date. Please clear it as soon as possible.{% elif latest_days_until_due is not none %}{{latest_days_until_due}} day{{"s" if latest_days_until_due != 1 else ""}} left until your latest fee record is due.{% else %}Review your outstanding hostel fee information below.{% endif %}</p></div>
+<div class="fee-status {{'paid' if latest_fee and latest_fee['status']|lower=='paid' else ('overdue' if latest_fee and latest_fee['id'] in overdue_ids else 'pending')}}"><i class="fa-solid {{'fa-circle-check' if latest_fee and latest_fee['status']|lower=='paid' else ('fa-triangle-exclamation' if latest_fee and latest_fee['id'] in overdue_ids else 'fa-clock')}}"></i>{{'Overdue' if latest_fee and latest_fee['id'] in overdue_ids else (latest_fee["status"] if latest_fee else "Pending")}}</div></section>
+
+<section class="fee-summary">
+<div><small>Total Recorded</small><strong>₹{{"{:,.0f}".format(total_amount)}}</strong></div>
+<div><small>Paid Amount</small><strong>₹{{"{:,.0f}".format(paid_amount)}}</strong></div>
+<div><small>Pending Amount</small><strong>₹{{"{:,.0f}".format(pending_amount)}}</strong></div>
+</section>
+
+<section class="payment-due-card">
+  <div class="payment-due-copy">
+    <span class="hero-kicker">PAYMENT DUE</span>
+    <h2>₹{{ "{:,.0f}".format(payment_due["amount"] or 0) if payment_due else "0" }}</h2>
+    <p>{% if payment_due %}{{ payment_due["purpose"] }} · Payment reference {{ payment_due["payment_ref"] }}{% else %}No outstanding payment due.{% endif %}</p>
+    {% if payment_due %}<div class="due-meta"><span><i class="fa-solid fa-user"></i> {{ student["name"] }}</span><span><i class="fa-solid fa-bed"></i> Room {{ student["room"] or "—" }}</span><span><i class="fa-solid fa-clock"></i> {{ payment_due["status"] }}</span></div>{% endif %}
+  </div>
+  {% if payment_due %}<button type="button" class="qr-payment-btn due-qr-btn" onclick="openPaymentQR()"><i class="fa-solid fa-qrcode"></i><span>Generate QR for Payment</span></button>{% endif %}
+</section>
+
+<section class="fee-grid"><div class="fee-card"><div class="title"><div><span>PAYMENT HISTORY</span><h2>Fee Records</h2></div><i class="fa-solid fa-receipt"></i></div>
+{% if fee_history %}<div class="table-wrap"><table><thead><tr><th>Record</th><th>Amount</th><th>Due Date</th><th>Paid Date</th><th>Status</th></tr></thead><tbody>
+{% for f in fee_history %}<tr><td>#{{"%03d"|format(loop.index)}}</td><td>₹{{"{:,.0f}".format(f["amount"] or 0)}}</td><td>{{f["due_date"] or "—"}}</td><td>{{f["paid_date"] or "—"}}</td><td><b class="{{'paid' if f['status']|lower=='paid' else ('overdue' if f['id'] in overdue_ids else 'pending')}}">{{'Overdue' if f['id'] in overdue_ids else (f["status"] or "Pending")}}</b></td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="empty">No fee records yet.</p>{% endif %}</div>
+
+<div class="fee-card"><div class="title"><div><span>STUDENT</span><h2>Account Details</h2></div><i class="fa-solid fa-user"></i></div>
+<p class="row"><span>Name</span><b>{{student["name"]}}</b></p><p class="row"><span>Enrollment</span><b>{{student["enrollment"]}}</b></p><p class="row"><span>Room</span><b>{{student["room"] or "—"}}</b></p>
+{% if latest_fee %}<div class="latest"><small>LATEST RECORD</small><strong>₹{{"{:,.0f}".format(latest_fee["amount"] or 0)}}</strong><span>{{latest_fee["status"]}}{% if latest_fee["paid_date"] %} on {{latest_fee["paid_date"]}}{% endif %}</span></div>{% endif %}
+<button type="button" class="qr-payment-btn" onclick="openPaymentQR()"><i class="fa-solid fa-qrcode"></i><span>Generate QR for Payment</span></button>
+</div></section>
+<div class="note"><i class="fa-solid fa-circle-info"></i><span>For fee corrections, receipts, or payment questions, contact hostel administration.</span></div>
+
+<div id="paymentQRModal" class="qr-modal" onclick="closePaymentQR(event)">
+  <div class="qr-modal-content" role="dialog" aria-modal="true" aria-label="Payment QR Code">
+    <button type="button" class="qr-close" onclick="closePaymentQR()" aria-label="Close">&times;</button>
+    <span class="qr-modal-kicker">PAYMENT QR</span>
+    <h2>Scan to Pay</h2>
+    {% if payment_due %}
+    <div class="qr-payment-summary"><strong>₹{{ "{:,.0f}".format(payment_due["amount"] or 0) }}</strong><span>{{ payment_due["purpose"] }}</span></div>
+    <img src="{{ url_for('static', filename='images/payment-qr.png') }}" alt="Payment QR Code">
+    <div class="qr-student-mini"><span>{{ student["name"] }}</span><span>{{ student["enrollment"] }} · Room {{ student["room"] or "—" }}</span></div>
+    <form method="POST" action="{{ url_for('submit_payment', payment_ref=payment_due['payment_ref']) }}">
+      <button type="submit" class="payment-submit-btn"><i class="fa-solid fa-check"></i> I Have Paid — Generate Receipt</button>
+    </form>
+    <small class="qr-verification-note">Your payment is recorded as <b>Pending Verification</b> until hostel administration verifies the transaction.</small>
+    {% else %}
+    <p class="empty">There is currently no payment due.</p>
+    {% endif %}
+  </div>
+</div>
+</main>
+<script>
+function clock(){let n=new Date();d.textContent=n.toLocaleDateString("en-IN",{weekday:"short",day:"2-digit",month:"short",year:"numeric"});t.textContent=n.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}clock();setInterval(clock,1000);
+function openPaymentQR(){document.getElementById("paymentQRModal").classList.add("show")}
+function closePaymentQR(event){if(!event || event.target===document.getElementById("paymentQRModal"))document.getElementById("paymentQRModal").classList.remove("show")}
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closePaymentQR()});
+</script></body></html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance | SAGE University Hostel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/attendance.css') }}">
+</head>
+
+<body>
+<aside class="sidebar">
+    <div class="logo">
+        <i class="fa-solid fa-building-columns"></i>
+        <span>SAGE HOSTEL</span>
+    </div>
+    <ul>
+        <li onclick="location.href='{{ url_for("dashboard") }}'"><i class="fa-solid fa-house"></i> Dashboard</li>
+        <li onclick="location.href='{{ url_for("profile") }}'"><i class="fa-solid fa-user"></i> Student Profile</li>
+        <li onclick="location.href='{{ url_for("room_details") }}'"><i class="fa-solid fa-bed"></i> Room Details</li>
+        <li onclick="location.href='{{ url_for("fees") }}'"><i class="fa-solid fa-money-check-dollar"></i> Fee Status</li>
+        <li class="active"><i class="fa-solid fa-calendar-check"></i> Attendance</li>
+        <li><i class="fa-solid fa-bullhorn"></i> Notices</li>
+        <li><i class="fa-solid fa-screwdriver-wrench"></i> Complaints</li>
+        <li><i class="fa-solid fa-gear"></i> Settings</li>
+        <li onclick="location.href='{{ url_for("logout") }}'"><i class="fa-solid fa-right-from-bracket"></i> Logout</li>
+    </ul>
+</aside>
+
+<main class="main attendance-main">
+<header class="attendance-header">
+    <div>
+        <div class="eyebrow">ATTENDANCE OVERVIEW</div>
+        <h1>Attendance</h1>
+        <p>Track your hostel attendance records and current attendance percentage.</p>
+    </div>
+    <div class="header-right">
+        <div class="clock"><span id="att-date"></span><span id="att-time"></span></div>
+        <div class="status"><span class="dot"></span> Online</div>
+    </div>
+</header>
+
+<section class="attendance-overview">
+    <div class="percentage-card">
+        <div class="ring" style="--percentage: {{ percentage }}%;">
+            <div class="ring-inner">
+                <strong>{{ percentage }}%</strong>
+                <span>Attendance</span>
+            </div>
+        </div>
+        <div class="overview-copy">
+            <span class="kicker">CURRENT PERFORMANCE</span>
+            <h2>
+                {% if percentage >= 90 %}
+                    Excellent attendance
+                {% elif percentage >= 75 %}
+                    Attendance is on track
+                {% else %}
+                    Attendance needs attention
+                {% endif %}
+            </h2>
+            <p>
+                {% if total %}
+                    You have attended {{ present }} out of {{ total }} recorded days.
+                {% else %}
+                    No attendance records have been recorded yet.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="attendance-stats">
+    <div class="stat-card">
+        <div class="stat-icon present"><i class="fa-solid fa-circle-check"></i></div>
+        <span>Present</span>
+        <strong>{{ present }}</strong>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon absent"><i class="fa-solid fa-circle-xmark"></i></div>
+        <span>Absent</span>
+        <strong>{{ absent }}</strong>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon total"><i class="fa-solid fa-calendar-days"></i></div>
+        <span>Recorded Days</span>
+        <strong>{{ total }}</strong>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon streak"><i class="fa-solid fa-fire"></i></div>
+        <span>Present Streak</span>
+        <strong>{{ streak }} day{{ "s" if streak != 1 else "" }}</strong>
+    </div>
+</section>
+
+<section class="attendance-grid">
+    <div class="attendance-card history">
+        <div class="card-heading">
+            <div>
+                <span>ATTENDANCE HISTORY</span>
+                <h2>Recent Records</h2>
+            </div>
+            {% if available_months %}
+            <form method="get" class="month-filter">
+                <select name="month" onchange="this.form.submit()">
+                    <option value="" {{ "selected" if not selected_month else "" }}>All months</option>
+                    {% for m in available_months %}
+                    <option value="{{ m }}" {{ "selected" if m == selected_month else "" }}>
+                        {{ m }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </form>
+            {% else %}
+            <i class="fa-solid fa-calendar-week"></i>
+            {% endif %}
+        </div>
+
+        {% if records %}
+        <div class="attendance-table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Date</th><th>Day</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                {% for record in records %}
+                    <tr>
+                        <td>{{ record["date"] }}</td>
+                        <td>{{ record["weekday"] }}</td>
+                        <td>
+                            <span class="attendance-status {{ 'present' if record['status']|lower == 'present' else 'absent' }}">
+                                <i class="fa-solid {{ 'fa-check' if record['status']|lower == 'present' else 'fa-xmark' }}"></i>
+                                {{ record["status"] }}
+                            </span>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fa-solid fa-calendar-xmark"></i>
+            {% if selected_month %}
+            <h3>No records for {{ selected_month }}</h3>
+            <p>Try a different month, or select "All months" above.</p>
+            {% else %}
+            <h3>No attendance records</h3>
+            <p>Your attendance history will appear here once records are added.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="attendance-card student-card">
+        <div class="card-heading">
+            <div>
+                <span>STUDENT</span>
+                <h2>Attendance Profile</h2>
+            </div>
+            <i class="fa-solid fa-user-check"></i>
+        </div>
+
+        <div class="profile-row"><span>Name</span><strong>{{ student["name"] }}</strong></div>
+        <div class="profile-row"><span>Enrollment</span><strong>{{ student["enrollment"] }}</strong></div>
+        <div class="profile-row"><span>Academic Year</span><strong>{{ student["year"] }}</strong></div>
+        <div class="profile-row"><span>Room</span><strong>{{ student["room"] or "—" }}</strong></div>
+
+        <div class="attendance-tip">
+            <i class="fa-solid fa-lightbulb"></i>
+            <div>
+                <strong>Attendance target</strong>
+                <span>Maintain regular attendance to keep your hostel record in good standing.</span>
+            </div>
+        </div>
+    </div>
+</section>
+</main>
+
+<script>
+function updateAttendanceClock() {
+    const now = new Date();
+    document.getElementById("att-date").textContent =
+        now.toLocaleDateString("en-IN", {weekday:"short", day:"2-digit", month:"short", year:"numeric"});
+    document.getElementById("att-time").textContent =
+        now.toLocaleTimeString("en-IN", {hour:"2-digit", minute:"2-digit", second:"2-digit"});
+}
+updateAttendanceClock();
+setInterval(updateAttendanceClock, 1000);
+</script>
+</body>
+</html>

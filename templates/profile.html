@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile | SAGE University Hostel</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+
+<body class="profile-page">
+
+    <aside class="sidebar">
+        <div class="logo">
+            <i class="fa-solid fa-building-columns"></i>
+            <span>SAGE HOSTEL</span>
+        </div>
+
+        <ul>
+            <li onclick="window.location.href='{{ url_for('dashboard') }}'">
+                <i class="fa-solid fa-house"></i>
+                Dashboard
+            </li>
+            <li class="active">
+                <i class="fa-solid fa-user"></i>
+                Student Profile
+            </li>
+            <li onclick="window.location.href='{{ url_for('room_details') }}'">
+                <i class="fa-solid fa-bed"></i>
+                Room Details
+            </li>
+            <li onclick="window.location.href='{{ url_for('fees') }}'">
+                <i class="fa-solid fa-money-check-dollar"></i>
+                Fee Status
+            </li>
+            <li onclick="location.href='{{ url_for("attendance") }}'">
+                <i class="fa-solid fa-calendar-check"></i>
+                Attendance
+            </li>
+            <li>
+                <i class="fa-solid fa-bullhorn"></i>
+                Notices
+            </li>
+            <li>
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                Complaints
+            </li>
+            <li>
+                <i class="fa-solid fa-gear"></i>
+                Settings
+            </li>
+            <li onclick="window.location.href='{{ url_for('logout') }}'">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </li>
+        </ul>
+    </aside>
+
+    <main class="main profile-main">
+
+        <header class="profile-header">
+            <div>
+                <div class="eyebrow"><i class="fa-solid fa-id-card"></i> STUDENT PROFILE</div>
+                <h1>{{ student["name"] }}</h1>
+                <p>Manage and review your registered hostel information.</p>
+            </div>
+
+            <div class="header-right">
+                <div class="clock">
+                    <span id="profile-date"></span>
+                    <span id="profile-time"></span>
+                </div>
+                <div class="status">
+                    <span class="dot"></span>
+                    Online
+                </div>
+            </div>
+        </header>
+
+        <section class="profile-hero">
+            <div class="identity">
+                <div class="profile-avatar">
+                    <span>{{ student["name"][0] }}</span>
+                </div>
+                <div>
+                    <span class="profile-label">HOSTEL RESIDENT</span>
+                    <h2>{{ student["name"] }}</h2>
+                    <p><i class="fa-solid fa-hashtag"></i> {{ student["enrollment"] }}</p>
+                    <div class="identity-tags">
+                        <span>{{ student["branch"] or "Branch not provided" }}</span>
+                        <span>{{ student["year"] or "Year not provided" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resident-status">
+                <span class="status-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                <div>
+                    <strong>Active Resident</strong>
+                    <small>Hostel access is currently active.</small>
+                </div>
+            </div>
+        </section>
+
+        <section class="profile-grid">
+
+            <div class="profile-panel details-panel">
+                <div class="panel-heading">
+                    <div>
+                        <span class="panel-kicker">PERSONAL</span>
+                        <h2>Student Information</h2>
+                    </div>
+                    <span class="panel-icon"><i class="fa-solid fa-user"></i></span>
+                </div>
+
+                <div class="detail-list">
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="fa-solid fa-user"></i></span>
+                        <div>
+                            <small>Full Name</small>
+                            <strong>{{ student["name"] }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="fa-solid fa-id-badge"></i></span>
+                        <div>
+                            <small>Enrollment Number</small>
+                            <strong>{{ student["enrollment"] }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+                        <div>
+                            <small>Academic Program</small>
+                            <strong>{{ student["branch"] or "Not provided" }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="fa-solid fa-calendar-days"></i></span>
+                        <div>
+                            <small>Academic Year</small>
+                            <strong>{{ student["year"] or "Not provided" }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-panel contact-panel">
+                <div class="panel-heading">
+                    <div>
+                        <span class="panel-kicker">CONTACT</span>
+                        <h2>Contact Details</h2>
+                    </div>
+                    <span class="panel-icon"><i class="fa-solid fa-address-book"></i></span>
+                </div>
+
+                <div class="detail-list">
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="fa-solid fa-envelope"></i></span>
+                        <div>
+                            <small>Email Address</small>
+                            <strong>{{ student["email"] or "Not provided" }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="fa-solid fa-phone"></i></span>
+                        <div>
+                            <small>Mobile Number</small>
+                            <strong>{{ student["phone"] or "Not provided" }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="fa-solid fa-user-shield"></i></span>
+                        <div>
+                            <small>Guardian Name</small>
+                            <strong>{{ student["guardian_name"] or "Not provided" }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-icon"><i class="fa-solid fa-phone-volume"></i></span>
+                        <div>
+                            <small>Guardian Contact</small>
+                            <strong>{{ student["guardian_phone"] or "Not provided" }}</strong>
+                        </div>
+                    </div>
+                </div>
+                <a class="profile-edit-button" href="{{ url_for('edit_profile') }}"><i class="fa-solid fa-pen-to-square"></i> Edit My Information</a>
+            </div>
+
+            <div class="profile-panel room-panel">
+                <div class="panel-heading">
+                    <div>
+                        <span class="panel-kicker">ACCOMMODATION</span>
+                        <h2>Room Allocation</h2>
+                    </div>
+                    <span class="panel-icon"><i class="fa-solid fa-bed"></i></span>
+                </div>
+
+                <div class="room-highlight">
+                    <div class="room-number">{{ student["room"] or "—" }}</div>
+                    <div>
+                        <span>ASSIGNED ROOM</span>
+                        <strong>{{ room_details["floor"] if room_details else "Floor not assigned" }}</strong>
+                    </div>
+                </div>
+
+                <div class="room-meta">
+                    <div>
+                        <small>Capacity</small>
+                        <strong>{{ room_details["capacity"] if room_details else "—" }} residents</strong>
+                    </div>
+                    <div>
+                        <small>Status</small>
+                        <strong class="success-text">{{ room_details["status"] if room_details else "Not assigned" }}</strong>
+                    </div>
+                </div>
+
+                {% if room_details and room_details["facilities"] %}
+                <div class="facility-box">
+                    <small>ROOM FACILITIES</small>
+                    <p><i class="fa-solid fa-circle-check"></i> {{ room_details["facilities"] }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="profile-panel overview-panel">
+                <div class="panel-heading">
+                    <div>
+                        <span class="panel-kicker">OVERVIEW</span>
+                        <h2>Hostel Summary</h2>
+                    </div>
+                    <span class="panel-icon"><i class="fa-solid fa-chart-simple"></i></span>
+                </div>
+
+                <div class="summary-list">
+                    <div class="summary-row">
+                        <span><i class="fa-solid fa-calendar-check"></i> Attendance</span>
+                        <strong>{{ attendance }}%</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span><i class="fa-solid fa-money-check-dollar"></i> Fee Status</span>
+                        <strong class="{{ 'success-text' if fee and fee['status'] == 'Paid' else 'warning-text' }}">
+                            {{ fee["status"] if fee else "Pending" }}
+                        </strong>
+                    </div>
+                    <div class="summary-row">
+                        <span><i class="fa-solid fa-screwdriver-wrench"></i> Open Complaints</span>
+                        <strong>{{ complaint_count }}</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span><i class="fa-solid fa-door-open"></i> Hostel Status</span>
+                        <strong class="success-text">Active</strong>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <div class="profile-note">
+            <i class="fa-solid fa-circle-info"></i>
+            <div>
+                <strong>Manage your information</strong>
+                <span>You can update your own student and contact details anytime using the Edit My Information option.</span>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function updateProfileClock() {
+            const now = new Date();
+            const date = now.toLocaleDateString('en-IN', {
+                weekday: 'short',
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+            const time = now.toLocaleTimeString('en-IN', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            document.getElementById('profile-date').textContent = date;
+            document.getElementById('profile-time').textContent = time;
+        }
+
+        updateProfileClock();
+        setInterval(updateProfileClock, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAGE University Hostel — Create Account</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="background-slider"><div class="overlay"></div></div>
+    <div class="circle one"></div><div class="circle two"></div><div class="circle three"></div>
+    <div class="login-container">
+        <div class="login-card auth-card">
+            <div class="logo" role="img" aria-label="SAGE University campus"></div>
+            <h1>SAGE UNIVERSITY</h1>
+            <h2>Boys Hostel Portal</h2>
+            <p class="welcome">Create Your Student Account</p>
+            <p class="auth-note">Use your own email and password. These details will be securely saved for your future hostel portal logins.</p>
+            {% if error %}<div class="error-message"><i class="fa-solid fa-circle-exclamation"></i> {{ error }}</div>{% endif %}
+            <form action="{{ url_for('signup') }}" method="POST">
+                <div class="input-box"><i class="fa-solid fa-user"></i><input name="name" type="text" value="{{ name or '' }}" placeholder="Full Name" autocomplete="name" required></div>
+                <div class="input-box"><i class="fa-solid fa-phone"></i><input name="phone" type="tel" value="{{ phone or '' }}" placeholder="Phone Number" autocomplete="tel" required></div>
+                <div class="input-box"><i class="fa-solid fa-envelope"></i><input name="email" type="email" value="{{ email or '' }}" placeholder="Email Address" autocomplete="email" required></div>
+                <div class="input-box"><i class="fa-solid fa-lock"></i><input id="password" name="password" type="password" placeholder="Create Password (8+ characters)" autocomplete="new-password" required><span id="togglePassword"><i class="fa-solid fa-eye"></i></span></div>
+                <div class="input-box"><i class="fa-solid fa-shield-halved"></i><input name="confirm_password" type="password" placeholder="Confirm Password" autocomplete="new-password" required></div>
+                <button class="login-btn" type="submit"><i class="fa-solid fa-user-plus"></i> Create Account</button>
+            </form>
+            <a class="back-link" href="{{ url_for('home') }}"><i class="fa-solid fa-arrow-left"></i> Back to Login</a>
+        </div>
+    </div>
+    <footer>© 2026 SAGE University Boys Hostel Management System</footer>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

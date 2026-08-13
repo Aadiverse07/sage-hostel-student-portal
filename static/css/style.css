@@ -1,0 +1,625 @@
+/* ===========================
+   SAGE HOSTEL PORTAL
+   Designed by ChatGPT
+=========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+
+    width:100%;
+    height:100vh;
+
+    overflow:hidden;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:white;
+
+    background:#050816;
+
+}
+
+/* ===========================
+      Animated Background
+=========================== */
+
+.background-slider{
+
+    position:fixed;
+
+    inset:-20px;
+
+    background-image:
+    linear-gradient(rgba(5,8,22,.55),
+    rgba(5,8,22,.72)),
+    url("../images/campus-bg.jpg");
+
+    background-size:cover;
+
+    background-position:center;
+
+    filter:blur(4px);
+
+    transform:scale(1.05);
+
+    z-index:-3;
+
+}
+
+/* ===========================
+      Floating Lights
+=========================== */
+
+.circle{
+
+position:absolute;
+
+border-radius:50%;
+
+filter:blur(80px);
+
+opacity:.30;
+
+animation:float 8s ease-in-out infinite;
+
+}
+
+.one{
+
+width:260px;
+
+height:260px;
+
+background:#1d4ed8;
+
+top:-70px;
+
+left:-70px;
+
+}
+
+.two{
+
+width:220px;
+
+height:220px;
+
+background:#facc15;
+
+bottom:-80px;
+
+right:-80px;
+
+animation-delay:2s;
+
+}
+
+.three{
+
+width:180px;
+
+height:180px;
+
+background:#3b82f6;
+
+top:50%;
+
+left:15%;
+
+animation-delay:4s;
+
+}
+
+@keyframes float{
+
+0%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-30px);
+
+}
+
+100%{
+
+transform:translateY(0);
+
+}
+
+}
+
+/* ===========================
+      Login Container
+=========================== */
+
+.login-container{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+width:100%;
+
+padding:30px;
+
+}
+
+/* ===========================
+      Glass Card
+=========================== */
+
+.login-card{
+
+width:430px;
+
+padding:45px;
+
+border-radius:28px;
+
+background:rgba(255,255,255,.08);
+
+backdrop-filter:blur(18px);
+
+border:1px solid rgba(255,255,255,.18);
+
+box-shadow:
+
+0 25px 60px rgba(0,0,0,.55),
+
+0 0 50px rgba(59,130,246,.20);
+
+animation:cardAppear 1s ease;
+
+}
+
+@keyframes cardAppear{
+
+from{
+
+opacity:0;
+
+transform:translateY(40px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* ===========================
+        Logo
+=========================== */
+
+.logo{
+
+width:100px;
+
+height:100px;
+
+margin:auto;
+
+border-radius:50%;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+background-image:url("../images/university-logo.jpg");
+
+background-size:cover;
+
+background-position:center 60%;
+
+border:3px solid rgba(255,255,255,.85);
+
+box-shadow:0 0 0 4px rgba(37,99,235,.45),0 8px 25px rgba(0,0,0,.5);
+
+margin-bottom:20px;
+
+}
+
+/* ===========================
+      Headings
+=========================== */
+
+.login-card h1{
+
+font-size:29px;
+
+font-weight:700;
+
+text-align:center;
+
+letter-spacing:1px;
+
+}
+
+.login-card h2{
+
+margin-top:6px;
+
+font-weight:400;
+
+font-size:17px;
+
+text-align:center;
+
+color:#d4d4d4;
+
+}
+
+.welcome{
+
+margin:25px 0;
+
+text-align:center;
+
+color:#d6d6d6;
+
+}
+
+/* ===========================
+      Inputs
+=========================== */
+
+.input-box{
+
+position:relative;
+
+margin-bottom:22px;
+
+}
+
+.input-box input{
+
+width:100%;
+
+padding:16px 50px;
+
+border:none;
+
+outline:none;
+
+border-radius:15px;
+
+font-size:15px;
+
+background:rgba(255,255,255,.12);
+
+color:white;
+
+transition:.4s;
+
+}
+
+.input-box input::placeholder{
+
+color:#d8d8d8;
+
+}
+
+.input-box input:focus{
+
+background:rgba(255,255,255,.20);
+
+box-shadow:0 0 18px rgba(37,99,235,.45);
+
+}
+
+.input-box i{
+
+position:absolute;
+
+left:18px;
+
+top:50%;
+
+transform:translateY(-50%);
+
+color:white;
+
+}
+
+#togglePassword{
+
+position:absolute;
+
+right:20px;
+
+top:50%;
+
+transform:translateY(-50%);
+
+cursor:pointer;
+
+}
+
+/* ===========================
+      Error Message
+=========================== */
+
+.error-message{
+
+background:rgba(239,68,68,.15);
+
+border:1px solid rgba(239,68,68,.5);
+
+color:#fca5a5;
+
+padding:10px 14px;
+
+border-radius:10px;
+
+font-size:14px;
+
+margin-bottom:18px;
+
+display:flex;
+
+align-items:center;
+
+gap:8px;
+
+}
+
+/* ===========================
+      Options
+=========================== */
+
+.options{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:28px;
+
+font-size:14px;
+
+}
+
+.options a{
+
+color:#facc15;
+
+text-decoration:none;
+
+}
+
+.options a:hover{
+
+text-decoration:underline;
+
+}
+
+/* ===========================
+      Button
+=========================== */
+
+.login-btn{
+
+width:100%;
+
+padding:15px;
+
+border:none;
+
+border-radius:14px;
+
+font-size:17px;
+
+font-weight:600;
+
+cursor:pointer;
+
+color:white;
+
+background:
+
+linear-gradient(135deg,#2563eb,#1d4ed8);
+
+transition:.35s;
+
+}
+
+.login-btn:hover{
+
+transform:translateY(-3px);
+
+box-shadow:
+
+0 12px 30px rgba(37,99,235,.45);
+
+}
+
+/* ===========================
+      Date Time
+=========================== */
+
+.info{
+
+display:flex;
+
+justify-content:space-between;
+
+margin-top:28px;
+
+font-size:14px;
+
+color:#e5e5e5;
+
+}
+
+.info i{
+
+margin-right:7px;
+
+color:#facc15;
+
+}
+
+/* ===========================
+      Footer
+=========================== */
+
+footer{
+
+position:absolute;
+
+bottom:18px;
+
+width:100%;
+
+text-align:center;
+
+font-size:14px;
+
+color:#ddd;
+
+letter-spacing:1px;
+
+}
+
+/* ===========================
+      Responsive
+=========================== */
+
+@media(max-width:600px){
+
+.login-card{
+
+width:95%;
+
+padding:30px;
+
+}
+
+.login-card h1{
+
+font-size:24px;
+
+}
+
+} 
+
+
+body{
+
+opacity:0;
+
+transition:1s;
+
+}
+
+.login-card{
+
+transform-style:preserve-3d;
+
+transition:.25s;
+
+}
+
+/* ===========================
+   ACCOUNT ACCESS ADDITIONS
+   Existing visual language preserved
+=========================== */
+
+.signup-prompt{
+    margin-top:20px;
+    text-align:center;
+    color:#e5e5e5;
+    font-size:14px;
+}
+
+.signup-prompt a{
+    color:#facc15;
+    text-decoration:none;
+    font-weight:600;
+    margin-left:4px;
+}
+
+.signup-prompt a:hover,
+.options a span:hover{
+    text-decoration:underline;
+}
+
+.success-message{
+    background:rgba(34,197,94,.15);
+    border:1px solid rgba(34,197,94,.45);
+    color:#bbf7d0;
+    padding:10px 14px;
+    border-radius:10px;
+    font-size:14px;
+    margin-top:18px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.auth-card{
+    width:470px;
+}
+
+.auth-card .welcome{
+    margin:18px 0 22px;
+}
+
+.auth-card .login-btn{
+    margin-top:4px;
+}
+
+.auth-note{
+    margin:0 0 18px;
+    text-align:center;
+    color:#d6d6d6;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.back-link{
+    display:block;
+    margin-top:18px;
+    text-align:center;
+    color:#facc15;
+    text-decoration:none;
+    font-size:14px;
+}
+
+.back-link:hover{
+    text-decoration:underline;
+}
+
+@media(max-width:600px){
+    body{
+        overflow:auto;
+        min-height:100vh;
+    }
+    .auth-card{
+        width:95%;
+        padding:30px;
+    }
+}

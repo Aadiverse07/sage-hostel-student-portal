@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>SAGE University Boys Hostel Portal</title>
+
+    <!-- Google Font -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Icons -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- CSS -->
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- Animated Background -->
+
+    <div class="background-slider">
+
+        <div class="overlay"></div>
+
+    </div>
+
+    <!-- Floating Light -->
+
+    <div class="circle one"></div>
+
+    <div class="circle two"></div>
+
+    <div class="circle three"></div>
+
+    <!-- Login Card -->
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <div class="logo" role="img" aria-label="SAGE University campus"></div>
+
+            <h1>SAGE UNIVERSITY</h1>
+
+            <h2>Boys Hostel Portal</h2>
+
+            <p class="welcome">
+
+                Secure Student Login
+
+            </p>
+
+            <form id="loginForm" action="{{ url_for('login') }}" method="POST">
+
+                {% if error %}
+
+                <div class="error-message">
+
+                    <i class="fa-solid fa-circle-exclamation"></i> {{ error }}
+
+                </div>
+
+                {% endif %}
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <input
+                        name="email"
+                        type="email"
+                        value="{{ login_email or '' }}"
+                        placeholder="Email Address"
+                        autocomplete="email"
+                        required>
+
+                </div>
+
+                <div class="input-box">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="Password"
+                        required>
+
+                    <span id="togglePassword">
+
+                        <i class="fa-solid fa-eye"></i>
+
+                    </span>
+
+                </div>
+
+                <div class="options">
+
+                    <label>
+
+                        <input type="checkbox">
+
+                        Remember Me
+
+                    </label>
+
+                    <a href="{{ url_for('reset_password') }}">
+
+                        Forgot Password? <span>Reset here</span>
+
+                    </a>
+
+                </div>
+
+                <button class="login-btn">
+
+                    Login
+
+                </button>
+
+            </form>
+
+            {% if success %}
+            <div class="success-message">
+                <i class="fa-solid fa-circle-check"></i> {{ success }}
+            </div>
+            {% endif %}
+
+            <div class="signup-prompt">
+                New student?
+                <a href="{{ url_for('signup') }}">Sign In / Create Account</a>
+            </div>
+
+            <div class="info">
+
+                <div>
+
+                    <i class="fa-solid fa-calendar"></i>
+
+                    <span id="date"></span>
+
+                </div>
+
+                <div>
+
+                    <i class="fa-solid fa-clock"></i>
+
+                    <span id="time"></span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer>
+
+        © 2026 SAGE University Boys Hostel Management System
+
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>

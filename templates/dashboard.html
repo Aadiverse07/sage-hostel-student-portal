@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SAGE University Hostel Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+<body>
+
+    <!-- Loader -->
+
+    <div id="loader">
+
+        <div class="loader-box">
+
+            <div class="loader-logo" role="img" aria-label="SAGE University campus"></div>
+
+            <h2>SAGE UNIVERSITY</h2>
+
+            <p>Loading Hostel Dashboard...</p>
+
+            <div class="progress">
+
+                <div class="progress-bar"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Sidebar -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <i class="fa-solid fa-building-columns"></i>
+
+            <span>SAGE HOSTEL</span>
+
+        </div>
+
+        <ul>
+
+            <li class="active" onclick="window.location.href='{{ url_for('dashboard') }}'">
+
+                <i class="fa-solid fa-house"></i>
+
+                Dashboard
+
+            </li>
+
+            <li onclick="window.location.href='{{ url_for('profile') }}'">
+
+                <i class="fa-solid fa-user"></i>
+
+                Student Profile
+
+            </li>
+
+            <li>
+
+                <i class="fa-solid fa-bed"></i>
+
+                Room Details
+
+            </li>
+
+            <li>
+
+                <i class="fa-solid fa-money-check-dollar"></i>
+
+                Fee Status
+
+            </li>
+
+            <li>
+
+                <i class="fa-solid fa-calendar-check"></i>
+
+                Attendance
+
+            </li>
+
+            <li>
+
+                <i class="fa-solid fa-bullhorn"></i>
+
+                Notices
+
+            </li>
+
+            <li>
+
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+
+                Complaints
+
+            </li>
+
+            <li>
+
+                <i class="fa-solid fa-gear"></i>
+
+                Settings
+
+            </li>
+
+            <li onclick="window.location.href='{{ url_for('logout') }}'">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                Logout
+
+            </li>
+
+        </ul>
+
+    </aside>
+
+    <!-- Main -->
+
+    <main class="main">
+
+        <!-- Header -->
+
+        <header>
+
+            <div>
+
+                <h1>Welcome Back 👋</h1>
+
+                <p>Boys Hostel Management Dashboard</p>
+
+            </div>
+
+            <div class="header-right">
+
+                <div class="clock">
+
+                    <span id="date"></span>
+
+                    <span id="time"></span>
+
+                </div>
+
+                <div class="status">
+
+                    <span class="dot"></span>
+
+                    Online
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- Cards -->
+
+        <section class="cards">
+
+            <div class="card">
+
+                <i class="fa-solid fa-bed"></i>
+
+                <h2>Room No.</h2>
+
+                <h1>{{ room }}</h1>
+
+            </div>
+
+            <div class="card">
+
+                <i class="fa-solid fa-money-check-dollar"></i>
+
+                <h2>Fee Status</h2>
+
+                <h1>{{ fee_status }}</h1>
+
+            </div>
+
+            <div class="card">
+
+                <i class="fa-solid fa-calendar-check"></i>
+
+                <h2>Attendance</h2>
+
+                <h1>{{ attendance }}%</h1>
+
+            </div>
+
+            <div class="card">
+
+                <i class="fa-solid fa-circle-exclamation"></i>
+
+                <h2>Complaints</h2>
+
+                <h1>{{ complaint_count }}</h1>
+
+            </div>
+
+        </section>
+
+        <!-- Profile + Gallery -->
+
+        <section class="content-grid">
+
+            <div class="profile-card">
+
+                <h2>Student Information</h2>
+
+                <div class="avatar">
+
+                    <i class="fa-solid fa-user"></i>
+
+                </div>
+
+                <table>
+
+                    <tr>
+
+                        <td>Name</td>
+
+                        <td>{{ student["name"] }}</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Enrollment</td>
+
+                        <td>{{ student["enrollment"] }}</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Branch</td>
+
+                        <td>{{ student["branch"] or "Not provided" }}</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Year</td>
+
+                        <td>{{ student["year"] or "Not provided" }}</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>Room</td>
+
+                        <td>{{ student["room"] or "Not allocated" }}</td>
+
+                    </tr>
+
+                    {% if room_details %}
+                    <tr>
+                        <td>Floor</td>
+                        <td>{{ room_details["floor"] or "Not provided" }}</td>
+                    </tr>
+                    <tr>
+                        <td>Capacity</td>
+                        <td>{{ room_details["capacity"] }}</td>
+                    </tr>
+                    {% endif %}
+
+                </table>
+
+            </div>
+
+            <div class="gallery">
+
+                <h2>Hostel Gallery</h2>
+
+                <div class="gallery-grid">
+
+                  <img src="{{ url_for('static', filename='images/hostel11.jpg') }}">
+
+                  <img src="{{ url_for('static', filename='images/hostel12.jpg') }}">
+
+                  <img src="{{ url_for('static', filename='images/hostel13.jpg') }}">
+
+                  <img src="{{ url_for('static', filename='images/room1.jpg') }}">
+
+                  <img src="{{ url_for('static', filename='images/room2.jpg') }}">
+
+                  <img src="{{ url_for('static', filename='images/room3.jpg') }}">
+
+                  <img src="{{ url_for('static', filename='images/campus-bg.jpg') }}">
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Bottom -->
+
+        <section class="bottom-grid">
+
+            <div class="notice-box">
+
+                <h2>
+
+                    <i class="fa-solid fa-bullhorn"></i>
+
+                    Latest Notices
+
+                </h2>
+
+                <ul>
+
+                    {% for notice in notices %}
+                    <li>
+                        <strong>{{ notice["title"] }}</strong>
+                        <span>{{ notice["content"] }}</span>
+                    </li>
+                    {% else %}
+                    <li>No active notices at the moment.</li>
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+            <div class="activity-box">
+
+                <h2>
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    Today's Activity
+
+                </h2>
+
+                <div class="activity">
+
+                    <p>Breakfast</p>
+
+                    <span>Completed</span>
+
+                </div>
+
+                <div class="activity">
+
+                    <p>Attendance</p>
+
+                    <span>Present</span>
+
+                </div>
+
+                <div class="activity">
+
+                    <p>Library</p>
+
+                    <span>Available</span>
+
+                </div>
+
+                <div class="activity">
+
+                    <p>Mess Dinner</p>
+
+                    <span>07:30 PM</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+</body>
+
+</html>
+```
